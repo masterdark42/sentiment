@@ -13,16 +13,14 @@ DEBUG = True
 HTTP_BAD_REQUEST = 400
 
 # TODO: подумать над сменой типа created_at на datetime
-SQL_INIT_DB = ('''
+SQL_INIT_DB = '''
                 CREATE TABLE IF NOT EXISTS reviews (
                   id INTEGER PRIMARY KEY AUTOINCREMENT,
                   text TEXT NOT NULL,
                   sentiment TEXT NOT NULL,
                   created_at TEXT NOT NULL,
                   CHECK (sentiment in ('positive', 'negative', 'neutral'))
-                ); ''',
-               'CREATE INDEX IF NOT EXISTS idx_reviews_sent ON reviews (sentiment);'
-              )
+                ); '''
 
 SQL_GET_REVIEWS = 'SELECT id, sentiment, text, created_at FROM reviews {} ORDER BY id'
 SQL_GET_REVIEWS_WHERE = 'WHERE sentiment = :sentiment'
@@ -49,8 +47,7 @@ def init_db():
     try:
         with app.app_context():
             db, cursor = get_db()
-            for sql in SQL_INIT_DB:
-                cursor.execute(sql)
+            cursor.execute(SQL_INIT_DB)
             logger.info('БД проинициализирована')
     except Exception as e:
         logger.fatal(str(e), exc_info=True)
